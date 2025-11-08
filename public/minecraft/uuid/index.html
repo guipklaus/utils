@@ -1,14 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UUID Generator</title>
+    <!-- ...existing code... -->
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            padding: 1rem;
+        }
+
+        .row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: 420px;
+            padding: .4rem;
+            font-family: monospace;
+        }
+
+        button {
+            padding: .45rem .7rem;
+        }
+    </style>
 </head>
+
 <body>
-    <div>
+    <h1>Online UUID Generator</h1>
+    <div class="row">
         <label for="uuid">UUID</label>
-        <input type="text">
+        <input id="uuid" type="text" readonly aria-label="UUID v4">
+        <button id="generateBtn" type="button">Gerar UUID</button>
     </div>
+
+    <script>
+        // Gera UUID v4 usando crypto.getRandomValues
+        (function () {
+            const input = document.getElementById('uuid');
+            const btn = document.getElementById('generateBtn');
+
+            function uuidv4() {
+                const b = crypto.getRandomValues(new Uint8Array(16));
+                // Ajusta os bits de versão e variante
+                b[6] = (b[6] & 0x0f) | 0x40; // versão 4
+                b[8] = (b[8] & 0x3f) | 0x80; // variante RFC4122
+                const hex = Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+                return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+            }
+
+            function generate() {
+                input.value = uuidv4();
+                input.select();
+            }
+
+            btn.addEventListener('click', generate);
+
+            // gera um UUID ao carregar a página
+            generate();
+        })();
+    </script>
 </body>
+
 </html>
